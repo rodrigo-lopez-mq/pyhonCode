@@ -1,24 +1,47 @@
 #!/usr/bin/python
-
+import os
 import requests
 
-def forecast():
-    # lat, lng = _check_lat_lng(lat, lng)
-    # url = "https://api.darkskyapp.com/v1/forecast/%s/%s,%s" % (api_key, lat, lng)
-    url = "https://api.darksky.net/forecast/9b57aee4f8a46306ea1b940ff31c1b5b/37.8267,-122.4233"
-    print (requests.get(url).json())
 
-# def location(place):
-#     """Find the latitude and longitude for a location."""
-#     map_key = mapquest()
-#     if map_key == '':
-#         raise Exception('No MAPQUEST_API_KEY found.')
-#     results = mapq.latlng(place)
-#     return (results['lat'], results['lng'])
+def setKey(api_key=None):
+    if api_key:
+        os.environ['DARKSKY_KEY'] = api_key
+    else:
+        print("ERROR: Key not specified")
+        return None
+    return api_key
 
-print ("SUP")
-#Client ID Client Sec
-#dj0yJmk9V1hYTXg5Q1ZMcjFQJmQ9WVdrOVYydG9VVEJoTnpBbWNHbzlNQS0tJnM9Y29uc3VtZXJzZWNyZXQmeD05MA--
-#b0dd007bce9abbabdf7ecacf2a9c606c00748309
 
-forecast()
+def getKey():
+    api_key = os.getenv('DARKSKY_KEY', '')
+    if api_key:
+        return api_key
+    else:
+        print("ERROR: Key not found")
+        return None
+
+
+def getForecast(longitude, latitude, units="auto"):
+    key = getKey()
+    if(key == None):
+        print("ERROR: Key not found")
+        return None
+    else:
+        key = getKey()
+    if units == "celsius":
+        units = "?&units=si"
+    elif units == "fahrenheit":
+        units = "?&units=us"
+    else:
+        units = ""
+    forecast_url = "https://api.darksky.net/forecast/"+key+"/"+str(latitude)+","+str(longitude)+units
+    return requests.get(forecast_url).json()
+
+
+def fetchCurrentPosition():
+    data = requests.get('http://freegeoip.net/json/').json()
+    longitude = data['longitude']
+    latitude = data['latitude']
+    return longitude, latitude
+
+
