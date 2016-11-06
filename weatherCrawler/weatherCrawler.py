@@ -45,3 +45,10 @@ def fetchCurrentPosition():
     return longitude, latitude
 
 
+key = "9b57aee4f8a46306ea1b940ff31c1b5b"
+
+setKey(key)
+longitude, latitude = fetchCurrentPosition()
+data = getForecast(longitude, latitude, "celsius")
+
+print(data['currently'])
